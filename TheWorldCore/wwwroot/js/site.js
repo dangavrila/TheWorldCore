@@ -1,12 +1,14 @@
 ﻿// site.js
-var ele = document.getElementById("username");
-ele.innerHTML = "Anne Christie";
+(function startup() {
+    var ele = document.getElementById("username");
+    ele.innerHTML = "Anne Christie";
 
-var main = document.getElementById("main");
-main.onmouseenter = function () {
-    main.style = " background: #888";
-};
+    var main = document.getElementById("main");
+    main.onmouseenter = function () {
+        main.style = " background: #888";
+    };
 
-main.onmouseleave = function () {
-    main.style = "";
-};
+    main.onmouseleave = function () {
+        main.style = "";
+    };
+}) ();
