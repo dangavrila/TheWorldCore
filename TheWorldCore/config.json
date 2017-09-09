@@ -1,5 +1,8 @@
 {
   "MailSettings": {
     "ToAddress": "dan.gavrila3@gmail.com"
+  },
+  "ConnectionStrings": {
+    "WorldCoreContextConnection": "Server=(localdb)\\MSSQLLocalDb; Database=TheWorldCoreDb;Trusted_Connection=True;MultipleActiveResultSets=True"
   }
 }

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TheWorldCore.Models;
 using TheWorldCore.Services;
 using TheWorldCore.ViewModels;
 
@@ -14,14 +15,18 @@ namespace TheWorldCore.Controllers.Web
     {
         private readonly IMailService _mailService;
         private readonly IConfigurationRoot _config;
+        private readonly WorldCoreContext _context;
 
-        public AppController(IMailService mailService, IConfigurationRoot config)
+        public AppController(IMailService mailService, IConfigurationRoot config, WorldCoreContext dbContext)
         {
             _mailService = mailService;
             _config = config;
+            _context = dbContext;
         }
         public IActionResult Index()
         {
+            var data = _context.Trips.ToList();
+
             return View();
         }
 
@@ -33,8 +38,9 @@ namespace TheWorldCore.Controllers.Web
         [HttpPost]
         public IActionResult Contact(ContactViewModel model)
         {
-            if (model.Email.Contains("aol.com"))
-                ModelState.AddModelError("", "AOL service is not supported.");
+            if (model.Email != null)
+                if (model.Email.Contains("aol.com"))
+                    ModelState.AddModelError("", "AOL service is not supported.");
 
             if (ModelState.IsValid)
             {

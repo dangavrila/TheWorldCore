@@ -42,6 +42,8 @@ namespace TheWorldCore
             {
                 // TODO: implement a real mail service.
             }
+
+            services.AddDbContext<TheWorldCore.Models.WorldCoreContext>();
             services.AddMvc();
         }
 
