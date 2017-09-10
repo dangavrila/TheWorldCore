@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TheWorldCore.Services;
 using Microsoft.Extensions.Configuration;
+using TheWorldCore.Models;
 
 namespace TheWorldCore
 {
@@ -44,15 +45,30 @@ namespace TheWorldCore
             }
 
             services.AddDbContext<TheWorldCore.Models.WorldCoreContext>();
+
+            services.AddScoped<IWorldCoreRepository, WorldCoreRepository>();
+
+            services.AddTransient<WordlCoreContextSeedData>();
+
+            services.AddLogging();
+
             services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app,
+            IHostingEnvironment env,
+            ILoggerFactory loggerFactory,
+            WordlCoreContextSeedData seedData)
         {
             if (env.IsEnvironment("Development"))
             {
                 app.UseDeveloperExceptionPage();
+                loggerFactory.AddDebug(LogLevel.Information);
+            }
+            else
+            {
+                loggerFactory.AddDebug(LogLevel.Error);
             }
 
             app.UseStaticFiles();
@@ -65,6 +81,8 @@ namespace TheWorldCore
                     defaults: new { controller = "App", action = "Index" }
                     );
             });
+
+            seedData.EnsureSeedData().Wait();
         }
     }
 }

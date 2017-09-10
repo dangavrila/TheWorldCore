@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,19 +16,29 @@ namespace TheWorldCore.Controllers.Web
     {
         private readonly IMailService _mailService;
         private readonly IConfigurationRoot _config;
-        private readonly WorldCoreContext _context;
+        private readonly IWorldCoreRepository _repository;
+        private readonly ILogger<AppController> _logger;
 
-        public AppController(IMailService mailService, IConfigurationRoot config, WorldCoreContext dbContext)
+        public AppController(IMailService mailService, IConfigurationRoot config, IWorldCoreRepository repository, ILogger<AppController> logger)
         {
             _mailService = mailService;
             _config = config;
-            _context = dbContext;
+            _repository = repository;
+            _logger = logger;
         }
         public IActionResult Index()
         {
-            var data = _context.Trips.ToList();
+            try
+            {
+                var data = _repository.GetAllTrips();
 
-            return View();
+                return View(data);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError($"Failed to get trips: {ex.Message}");
+                return Redirect("/error");
+            }
         }
 
         public IActionResult Contact()
