@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using TheWorldCore.Services;
 using Microsoft.Extensions.Configuration;
 using TheWorldCore.Models;
+using TheWorldCore.ViewModels;
 
 namespace TheWorldCore
 {
@@ -61,6 +62,11 @@ namespace TheWorldCore
             ILoggerFactory loggerFactory,
             WordlCoreContextSeedData seedData)
         {
+            AutoMapper.Mapper.Initialize(config =>
+            {
+                config.CreateMap<TripViewModel, Trip>().ReverseMap();
+            });
+
             if (env.IsEnvironment("Development"))
             {
                 app.UseDeveloperExceptionPage();
