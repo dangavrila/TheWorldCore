@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TheWorldCore.Models;
+using TheWorldCore.Services;
 using TheWorldCore.ViewModels;
 
 namespace TheWorldCore.Controllers.Api
@@ -16,11 +17,13 @@ namespace TheWorldCore.Controllers.Api
     {
         private readonly IWorldCoreRepository _repository;
         private readonly ILogger<StopsController> _logger;
+        private readonly GeoCoordService _geoCoordService;
 
-        public StopsController(IWorldCoreRepository repository, ILogger<StopsController> logger)
+        public StopsController(IWorldCoreRepository repository, ILogger<StopsController> logger, GeoCoordService geoCoordService)
         {
             _repository = repository;
             _logger = logger;
+            _geoCoordService = geoCoordService;
         }
 
         [HttpGet("")]
@@ -47,12 +50,23 @@ namespace TheWorldCore.Controllers.Api
                 {
                     var newStop = Mapper.Map<Stop>(vm);
 
-                    _repository.AddStop(tripName, newStop);
-
-                    if (await _repository.SaveChangesAsync())
+                    var result = await _geoCoordService.GetCoordAsync(newStop.Name);
+                    if (!result.Success)
                     {
-                        return Created($"/api/trips/{tripName}/{newStop.Name}",
-                            Mapper.Map<StopViewModel>(newStop));
+                        _logger.LogError(result.Message);
+                    }
+                    else
+                    {
+                        newStop.Latitude = result.Latitude;
+                        newStop.Longitude = result.Longitude;
+
+                        _repository.AddStop(tripName, newStop);
+
+                        if (await _repository.SaveChangesAsync())
+                        {
+                            return Created($"/api/trips/{tripName}/{newStop.Name}",
+                                Mapper.Map<StopViewModel>(newStop));
+                        }
                     }
                 }
             }

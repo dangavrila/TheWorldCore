@@ -49,6 +49,8 @@ namespace TheWorldCore
 
             services.AddScoped<IWorldCoreRepository, WorldCoreRepository>();
 
+            services.AddTransient<GeoCoordService>();
+
             services.AddTransient<WordlCoreContextSeedData>();
 
             services.AddLogging();

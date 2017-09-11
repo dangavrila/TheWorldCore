@@ -4,5 +4,8 @@
   },
   "ConnectionStrings": {
     "WorldCoreContextConnection": "Server=(localdb)\\MSSQLLocalDb; Database=TheWorldCoreDb;Trusted_Connection=True;MultipleActiveResultSets=True"
+  },
+  "Keys": {
+    "BingMapsKey": "DONOTEVERPUTKEYSINSOURCECONTROL"
   }
 }
